@@ -19,20 +19,33 @@ repositories {
 	mavenCentral()
 }
 
+val r2dbcVersion = "0.8.13.RELEASE"
+val r2dbcPoolVersion = "1.0.0.RELEASE"
+
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("io.r2dbc:r2dbc-postgresql:$r2dbcVersion")
+	implementation("io.r2dbc:r2dbc-pool:$r2dbcPoolVersion")
+	implementation("org.springframework.data:spring-data-relational")
+	implementation("org.liquibase:liquibase-core")
+
+	runtimeOnly("org.postgresql:postgresql")
+
+
+	implementation("jakarta.validation:jakarta.validation-api")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-	implementation("org.postgresql:postgresql")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.projectreactor:reactor-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation("org.testcontainers:postgresql")
 	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
 
 kotlin {
 	compilerOptions {
