@@ -73,7 +73,8 @@ docker-compose -f docker-compose-db.yml up -d
 ./gradlew test
 ```
 
-## Диаграмма последовательностей (после вызова `/turn`):
+<details>
+<summary>Диаграмма последовательностей (после вызова <code>/turn</code>)</summary>
 
 ```mermaid
 sequenceDiagram
@@ -88,7 +89,8 @@ sequenceDiagram
     Repository-->>Service: GameEntity
     Service->>Service: updateField()
     Service->>Repository: save(updatedEntity)
-    Repository-->>Service
+    Repository-->>Service: GameEntity
     Service-->>Controller: GameInfoResponse
     Controller-->>Client: GameInfoResponse
 ```
+</details>
