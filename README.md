@@ -83,12 +83,19 @@ sequenceDiagram
     participant Service
     participant Repository
 
+    Client->>Controller: POST /new (width, height, mines_count)
+    Controller->>Service: newGame(request)
+    Service->>Repository: save(new GameEntity)
+    Repository-->>Service: GameEntity
+    Service-->>Controller: GameInfoResponse
+    Controller-->>Client: GameInfoResponse
+
     Client->>Controller: POST /turn (gameId, row, col)
     Controller->>Service: turn(request)
     Service->>Repository: findById(gameId)
     Repository-->>Service: GameEntity
     Service->>Service: updateField()
-    Service->>Repository: save(updatedEntity)
+    Service->>Repository: update(updatedEntity)
     Repository-->>Service: GameEntity
     Service-->>Controller: GameInfoResponse
     Controller-->>Client: GameInfoResponse
