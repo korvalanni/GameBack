@@ -74,7 +74,7 @@ docker-compose -f docker-compose-db.yml up -d
 ```
 
 <details>
-<summary>Диаграмма последовательностей (после вызова <code>/turn</code>)</summary>
+<summary>Диаграмма</summary>
 
 ```mermaid
 sequenceDiagram
