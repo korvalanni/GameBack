@@ -162,4 +162,5 @@ class GameApplicationTests {
 			.expectStatus().isOk
 			.expectBody().jsonPath("$.field").isArray
 	}
+
 }

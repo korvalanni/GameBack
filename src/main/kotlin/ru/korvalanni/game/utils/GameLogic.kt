@@ -16,7 +16,11 @@ object GameLogic {
         }
 
         field[row][col] = "1"
-        val completed = field.flatten().none { it == " " || it == "M" }
+        val totalCells = field.size * field[0].size
+        val openedCells = field.flatten().count { it == "1" || it == "X" }
+        val minesCount = field.flatten().count { it == "M" }
+
+        val completed = (totalCells - openedCells) == minesCount
         return field to completed
     }
 }

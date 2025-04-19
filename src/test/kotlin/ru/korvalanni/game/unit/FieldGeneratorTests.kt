@@ -35,4 +35,5 @@ class FieldGeneratorTests {
         assertEquals(height, field.size)
         assertTrue(field.all { it.size == width })
     }
+
 }
