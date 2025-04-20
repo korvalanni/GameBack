@@ -59,22 +59,22 @@ class GameServiceTest {
             Arguments.of(
                 listOf(
                     listOf("1", "1"),
-                    listOf("1", "M")
+                    listOf(" ", "M")
                 ), 1, 0, true, "1"
             ),
             // Не победа: клетка ещё осталась
             Arguments.of(
                 listOf(
-                    listOf("1", " "),
-                    listOf(" ", "M")
-                ), 1, 0, false, "1"
+                    listOf("1", "0"),
+                    listOf("0", "M")
+                ), 1, 0, false, "0"
             ),
             // Поражение: попали на мину
             Arguments.of(
                 listOf(
                     listOf("M", "1"),
                     listOf("1", "1")
-                ), 0, 0, true, "X"
+                ), 0, 0, false, "X"
             )
         )
     }

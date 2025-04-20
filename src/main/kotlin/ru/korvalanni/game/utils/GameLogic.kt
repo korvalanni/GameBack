@@ -10,30 +10,27 @@ object GameLogic {
         mapper.readValue(serialized, List::class.java) as List<List<String>>
 
     fun handleMove(field: MutableList<MutableList<String>>, row: Int, col: Int): Pair<List<List<String>>, Boolean> {
-        if (!isInBounds(field, row, col) || field[row][col] != " ") {
-            return field to false // Игнорируем клик вне поля или повторный
-        }
+        if (!isInBounds(field, row, col)) return field to false
 
-        if (field[row][col] == "M") {
-            field[row][col] = "X"
-            revealAllCells(field, row, col)
-            return field to false
+        when (field[row][col]) {
+            "M" -> {
+                revealAllCells(field, row, col)
+                return field to false
+            }
+            " " -> openCell(field, row, col)
+            else -> return field to false
         }
-
-        openCell(field, row, col)
 
         val total = field.size * field[0].size
-        val opened = field.flatten().count { it != " " && it != "M" }
-        val mines = field.flatten().count { it == "M" }
+        val revealed = field.flatten().count { it != " " && it != "M" }
+        val expectedRevealed = total - field.flatten().count { it == "M" }
+        val completed = revealed == expectedRevealed
 
-        val completed = (total - opened) == mines
-
-        if (completed) {
-            revealAllMines(field)
-        }
 
         return field to completed
     }
+
+
 
     private fun openCell(field: MutableList<MutableList<String>>, row: Int, col: Int) {
         if (row !in field.indices || col !in field[0].indices) return
@@ -76,16 +73,6 @@ object GameLogic {
             val r = row + dr
             val c = col + dc
             isInBounds(field, r, c) && field[r][c] == "M"
-        }
-    }
-
-    private fun revealAllMines(field: MutableList<MutableList<String>>) {
-        for (r in field.indices) {
-            for (c in field[0].indices) {
-                if (field[r][c] == "M") {
-                    field[r][c] = "M"
-                }
-            }
         }
     }
 

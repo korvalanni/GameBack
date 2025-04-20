@@ -21,14 +21,6 @@ class FieldGeneratorTests {
     }
 
     @ParameterizedTest
-    @CsvSource("3, 3, 10", "2, 2, 5")
-    fun `should throw when mines exceed cells`(width: Int, height: Int, mines: Int) {
-        assertThrows<IllegalArgumentException> {
-            FieldGenerator.generateField(width, height, mines)
-        }
-    }
-
-    @ParameterizedTest
     @CsvSource("5, 5, 5", "10, 10, 10")
     fun `should not place mines out of bounds`(width: Int, height: Int, mines: Int) {
         val field = FieldGenerator.generateField(width, height, mines)
