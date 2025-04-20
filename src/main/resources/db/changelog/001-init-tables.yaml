@@ -28,4 +28,4 @@ databaseChangeLog:
                   type: TEXT
               - column:
                   name: version
-                  type: BIGINT
+                  type: INT

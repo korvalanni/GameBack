@@ -29,13 +29,13 @@ class GameService(
             log.info("New game created: \${saved.id}")
             GameMapper.toResponse(saved)
         }.onFailure { log.error("Failed to create game", it) }
-            .getOrElse { throw GameCreationFailedException }
+            .getOrElse { throw GameCreationFailedException() }
 
     suspend fun turn(input: GameTurnRequest): GameInfoResponse {
         val entity = repository.findById(input.gameId)
             ?: throw GameNotFoundException(input.gameId)
 
-        if (entity.completed) throw GameAlreadyCompletedException
+        if (entity.completed) throw GameAlreadyCompletedException()
 
         if (input.row !in 0 until entity.height || input.col !in 0 until entity.width)
             throw InvalidCoordinatesException(input.row, input.col)
