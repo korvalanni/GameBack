@@ -9,11 +9,11 @@ data class GameTurnRequest(
 
     @JsonProperty("row")
     @field:Min(0)
-    @field:Max(99)
+    @field:Max(29)
     val row: Int,
 
     @JsonProperty("col")
     @field:Min(0)
-    @field:Max(99)
+    @field:Max(29)
     val col: Int
 )
