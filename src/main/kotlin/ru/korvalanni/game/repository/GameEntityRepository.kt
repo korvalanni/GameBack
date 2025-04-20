@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.query.Update
 import org.springframework.stereotype.Repository
 import ru.korvalanni.game.repository.entity.GameEntity
 
-import java.util.*
+import java.util.UUID
 
 @Repository
 class GameEntityRepository(

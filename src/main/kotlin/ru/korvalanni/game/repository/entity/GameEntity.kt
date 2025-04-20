@@ -4,7 +4,8 @@ package ru.korvalanni.game.repository.entity
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Version
-import java.util.*
+import java.util.UUID
+
 
 @Table("games")
 data class GameEntity(

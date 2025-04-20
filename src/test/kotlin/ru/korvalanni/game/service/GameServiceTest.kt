@@ -13,7 +13,7 @@ import org.mockito.kotlin.whenever
 import ru.korvalanni.game.repository.GameEntityRepository
 import ru.korvalanni.game.repository.entity.GameEntity
 
-import java.util.*
+import java.util.UUID
 import java.util.stream.Stream
 
 class GameServiceTest {

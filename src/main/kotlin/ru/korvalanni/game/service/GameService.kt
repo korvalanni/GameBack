@@ -7,7 +7,11 @@ import ru.korvalanni.game.utils.FieldGenerator
 import ru.korvalanni.game.utils.GameMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import ru.korvalanni.game.exception.*
+import ru.korvalanni.game.exception.GameAlreadyCompletedException
+import ru.korvalanni.game.exception.GameCreationFailedException
+import ru.korvalanni.game.exception.GameNotFoundException
+import ru.korvalanni.game.exception.InvalidCoordinatesException
+
 import ru.korvalanni.game.repository.GameEntityRepository
 import ru.korvalanni.game.utils.GameLogic
 

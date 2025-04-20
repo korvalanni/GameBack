@@ -1,6 +1,6 @@
 package ru.korvalanni.game.exception
 
-import java.util.*
+import java.util.UUID
 
 open class GameException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
