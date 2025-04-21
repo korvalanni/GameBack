@@ -1,1 +1,0 @@
-data class ErrorResponse(val error: String)

@@ -1,6 +1,5 @@
 package ru.korvalanni.game.service
 
-import GameTurnRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -10,10 +9,10 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import ru.korvalanni.game.controller.dto.GameTurnRequest
 import ru.korvalanni.game.repository.GameEntityRepository
 import ru.korvalanni.game.repository.entity.GameEntity
-
-import java.util.UUID
+import java.util.*
 import java.util.stream.Stream
 
 class GameServiceTest {
@@ -25,26 +24,28 @@ class GameServiceTest {
     @ParameterizedTest
     @MethodSource("turnOutcomes")
     fun `should return correct completion status and mark cell`(
-        field: List<List<String>>,
+        playerField: List<List<String>>,
+        hiddenField: List<List<String>>,
         row: Int,
         col: Int,
         shouldComplete: Boolean,
-        expectedCellValue: String
+        expectedCellValue: String,
     ) = runBlocking {
         val id = UUID.randomUUID()
 
         val entity = GameEntity(
             id = id,
-            width = field[0].size,
-            height = field.size,
-            minesCount = field.flatten().count { it == "M" },
+            width = playerField[0].size,
+            height = playerField.size,
+            minesCount = hiddenField.flatten().count { it == "M" },
             completed = false,
-            field = mapper.writeValueAsString(field),
+            field = mapper.writeValueAsString(playerField),
+            hiddenField = mapper.writeValueAsString(hiddenField),
             version = 1
         )
 
         whenever(repository.findById(id)).thenReturn(entity)
-        whenever(repository.update(any())).thenAnswer { it.arguments[0] }
+        whenever(repository.update(any(), any())).thenAnswer { it.arguments[0] }
 
         val result = service.turn(GameTurnRequest(id, row, col))
 
@@ -60,21 +61,36 @@ class GameServiceTest {
                 listOf(
                     listOf("1", "1"),
                     listOf(" ", "M")
-                ), 1, 0, true, "1"
+                ),
+                listOf(
+                    listOf("1", "1"),
+                    listOf("1", "M")
+                ),
+                1, 0, true, "1"
             ),
             // Не победа: клетка ещё осталась
             Arguments.of(
                 listOf(
-                    listOf("1", "0"),
-                    listOf("0", "M")
-                ), 1, 0, false, "0"
+                    listOf(" ", " "),
+                    listOf(" ", " ")
+                ),
+                listOf(
+                    listOf("1", "1"),
+                    listOf("1", "M")
+                ),
+                0, 0, false, "1"
             ),
             // Поражение: попали на мину
             Arguments.of(
                 listOf(
+                    listOf(" ", " "),
+                    listOf(" ", " ")
+                ),
+                listOf(
                     listOf("M", "1"),
                     listOf("1", "1")
-                ), 0, 0, false, "X"
+                ),
+                0, 0, true, "X"
             )
         )
     }

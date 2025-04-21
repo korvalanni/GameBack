@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: game
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/game
+    username: user
+    password: password
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    url: jdbc:postgresql://localhost:5432/game
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+
+logging:
+  level:
+    org.springframework.r2dbc.core: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG

@@ -27,5 +27,8 @@ databaseChangeLog:
                   name: field
                   type: TEXT
               - column:
+                  name: hidden_field
+                  type: TEXT
+              - column:
                   name: version
-                  type: INT
+                  type: SMALLINT

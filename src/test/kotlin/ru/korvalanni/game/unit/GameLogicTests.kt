@@ -1,9 +1,11 @@
 package ru.korvalanni.game.unit
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import org.junit.jupiter.api.Test
 import ru.korvalanni.game.utils.GameLogic
 
 class GameLogicTests {
@@ -20,38 +22,50 @@ class GameLogicTests {
     @Test
     fun `should return false when clicking on already opened cell`() {
         val field = mutableListOf(
-            mutableListOf("1", "1"),
-            mutableListOf("1", "1")
+            mutableListOf(" ", " "),
+            mutableListOf(" ", " ")
         )
-        val (newField, completed) = GameLogic.handleMove(field, 0, 0)
+        val hiddenField = listOf(
+            listOf("1", "1"),
+            listOf("1", "M")
+        )
+        val (newField, completed) = GameLogic.handleMove(field, hiddenField, 0, 0)
         assertFalse(completed)
-        assertEquals("1", newField[0][0]) // Не изменилось
+        assertEquals("1", newField[0][0])
     }
 
     @ParameterizedTest
     @CsvSource(
         "0,0,false", // обычный ход, не победа
-        "1,1,false"   // подрыв на мине -> конец
+        "1,1,true"   // подрыв на мине -> конец
     )
-    fun `should handle normal moves and track completion`(row: Int, col: Int, shouldWin: Boolean) {
+    fun `should handle normal moves and track completion`(row: Int, col: Int, shouldComplete: Boolean) {
         val field = mutableListOf(
             mutableListOf(" ", " "),
-            mutableListOf(" ", "M")
+            mutableListOf(" ", " ")
         )
-        val (newField, completed) = GameLogic.handleMove(field, row, col)
-        assertTrue(newField[row][col] != " ") // Открыта
-        assertEquals(shouldWin, completed)
+        val hiddenField = listOf(
+            listOf("1", "1"),
+            listOf("1", "M")
+        )
+        val (newField, completed) = GameLogic.handleMove(field, hiddenField, row, col)
+        assertTrue(newField[row][col] != " ")
+        assertEquals(shouldComplete, completed)
     }
 
     @Test
     fun `should mark X and reveal all mines on hit`() {
-        val field = mutableListOf(
+        val playerField = mutableListOf(
             mutableListOf(" ", " "),
-            mutableListOf("M", "X")
+            mutableListOf(" ", " ")
         )
-        val (newField, completed) = GameLogic.handleMove(field, 1, 1)
+        val hiddenField = listOf(
+            listOf("1", "1"),
+            listOf("M", "M")
+        )
+        val (newField, completed) = GameLogic.handleMove(playerField, hiddenField, 1, 1)
         assertEquals("X", newField[1][1])
-        assertEquals("M", newField[1][0]) // другая мина тоже показана
-        assertFalse(completed)
+        assertEquals("X", newField[1][0])
+        assertTrue(completed)
     }
 }

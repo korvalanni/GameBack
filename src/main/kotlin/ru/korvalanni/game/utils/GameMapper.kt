@@ -1,20 +1,24 @@
 package ru.korvalanni.game.utils
 
-import GameInfoResponse
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import ru.korvalanni.game.controller.dto.GameInfoResponse
 import ru.korvalanni.game.controller.dto.NewGameRequest
 import ru.korvalanni.game.repository.entity.GameEntity
 
 object GameMapper {
-    private val mapper = ObjectMapper()
+    private val mapper = jacksonObjectMapper()
 
-    fun toEntity(req: NewGameRequest, field: List<List<String>>): GameEntity =
-        GameEntity(
+    fun toEmptyEntity(req: NewGameRequest): GameEntity {
+        val playerField = List(req.height) { List(req.width) { " " } }
+        return GameEntity(
             width = req.width,
             height = req.height,
             minesCount = req.minesCount,
-            field = mapper.writeValueAsString(field)
+            field = mapper.writeValueAsString(playerField),
+            hiddenField = ""
         )
+    }
 
     fun toResponse(entity: GameEntity): GameInfoResponse =
         GameInfoResponse(
@@ -23,7 +27,7 @@ object GameMapper {
             height = entity.height,
             minesCount = entity.minesCount,
             completed = entity.completed,
-            field = mapper.readValue(entity.field, List::class.java) as List<List<String>>
+            field = mapper.readValue<List<List<String>>>(entity.field)
         )
 
     fun updateEntity(entity: GameEntity, newField: List<List<String>>, completed: Boolean): GameEntity =

@@ -1,9 +1,10 @@
 package ru.korvalanni.game.controller.handler
 
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.swagger.v3.oas.annotations.Hidden
 import jakarta.validation.ConstraintViolationException
-import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -11,25 +12,26 @@ import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ServerWebInputException
 import ru.korvalanni.game.controller.dto.ServiceErrorDto
 import ru.korvalanni.game.controller.handler.error.MinesweeperErrorCode
-import ru.korvalanni.game.exception.GameNotFoundException
+import ru.korvalanni.game.exception.GameException
 
+@Hidden
 @RestControllerAdvice
 class ErrorHandler {
-    private val log = LoggerFactory.getLogger(ErrorHandler::class.java)
 
     @ExceptionHandler(Exception::class)
     fun handleUnexpected(ex: Exception): ResponseEntity<ServiceErrorDto> {
-        log.error("UNEXPECTED", ex)
+        log.error(ex) { "UNEXPECTED error: ${ex.message}" }
         return ResponseEntity
             .internalServerError()
             .body(toDto(MinesweeperErrorCode.UNKNOWN))
     }
 
-    @ExceptionHandler(GameNotFoundException::class)
-    fun handleGameNotFound(ex: GameNotFoundException): ResponseEntity<ServiceErrorDto> {
+    @ExceptionHandler(GameException::class)
+    fun handleGameException(ex: GameException): ResponseEntity<ServiceErrorDto> {
+        log.info { "game exception: ${ex.message}" }
         return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(toDto(MinesweeperErrorCode.GAME_NOT_FOUND))
+            .status(ex.statusCode)
+            .body(ServiceErrorDto(error = ex.message ?: "Unknown error occurred"))
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
@@ -41,6 +43,13 @@ class ErrorHandler {
 
     @ExceptionHandler(WebExchangeBindException::class)
     fun handleBindException(ex: WebExchangeBindException): ResponseEntity<ServiceErrorDto> {
+        return ResponseEntity
+            .badRequest()
+            .body(toDto(MinesweeperErrorCode.VALIDATION_FAILED))
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadableException(ex: HttpMessageNotReadableException): ResponseEntity<ServiceErrorDto> {
         return ResponseEntity
             .badRequest()
             .body(toDto(MinesweeperErrorCode.VALIDATION_FAILED))
@@ -60,7 +69,8 @@ class ErrorHandler {
             .body(toDto(MinesweeperErrorCode.VALIDATION_FAILED))
     }
 
-    companion object {
+    private companion object {
+        val log = KotlinLogging.logger { }
         fun toDto(code: MinesweeperErrorCode): ServiceErrorDto =
             ServiceErrorDto(code.name, code.status, code.message)
 
