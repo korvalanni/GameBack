@@ -13,5 +13,22 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: game-app
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/game
+      - SPRING_R2DBC_USERNAME=user
+      - SPRING_R2DBC_PASSWORD=password
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://postgres:5432/game
+      - SPRING_LIQUIBASE_USER=user
+      - SPRING_LIQUIBASE_PASSWORD=password
+
 volumes:
   postgres_data:
